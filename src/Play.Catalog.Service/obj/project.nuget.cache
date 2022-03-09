@@ -2,7 +2,7 @@
   "version": 2,
   "dgSpecHash": "XIxQYVGOgR/Jsj/Ut1DIT4TD3J23IeVDa2ePNenPR6WnyL8+/z1rsHkizwvEKzAsAkSVILrJvbWLX2IXYOiLtA==",
   "success": true,
-  "projectFilePath": "/home/pedrosalgado/Documentos/projects/Play.Catalog/src/Play.Catalog.Service/Play.Catalog.Service.csproj",
+  "projectFilePath": "C:\\Users\\mendo\\OneDrive\\Documentos\\Estudos\\dotnet\\play-catalog\\src\\Play.Catalog.Service\\Play.Catalog.Service.csproj",
   "expectedPackageFiles": [
     "/home/pedrosalgado/.nuget/packages/dnsclient/1.4.0/dnsclient.1.4.0.nupkg.sha512",
     "/home/pedrosalgado/.nuget/packages/microsoft.extensions.apidescription.server/3.0.0/microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
