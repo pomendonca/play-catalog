@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Play.Catalog.Service.Repositories;
 
 namespace Play.Catalog.Service.Controllers
 {
@@ -6,24 +7,26 @@ namespace Play.Catalog.Service.Controllers
     [Route("api/items")]
     public class ItemController : ControllerBase
     {
-        private static readonly List<ItemDto> items = new()
-        {
-            new ItemDto(Guid.NewGuid(), "Potion", "Restores a small amount of HP", 5, DateTimeOffset.UtcNow),
-            new ItemDto(Guid.NewGuid(), "Antidote", "Cures poison", 7, DateTimeOffset.UtcNow),
-            new ItemDto(Guid.NewGuid(), "Bronze sword", "Deals a small amount of damage", 20, DateTimeOffset.UtcNow)
-        };
+        private readonly ItemsRepository itemsRepository = new();
 
         [HttpGet]
-        public ActionResult<IEnumerable<ItemDto>> Get()
+        public async Task<IEnumerable<ItemDto>> GetAsync()
         {
-            return Ok(items);
+            var items = (await itemsRepository.GetAllAsync())
+                        .Select(item => item.AsDto());
+            return items;
         }
 
         [HttpGet("{id}")]
-        public ActionResult<IEnumerable<ItemDto>> GetById(Guid id)
+        public async Task<ActionResult<ItemDto>> GetByIdAsync(Guid id)
         {
-            var item = items.Where(item => item.id == id).SingleOrDefault();
-            return Ok(item);
+            var item = await itemsRepository.GetAsync(id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            return item.AsDto();
         }
     }
 }
