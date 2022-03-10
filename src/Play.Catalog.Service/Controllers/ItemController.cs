@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Play.Catalog.Service.Dtos;
 using Play.Catalog.Service.Repositories;
+using Play.Catalog.Service.Entities;
 
 namespace Play.Catalog.Service.Controllers
 {
@@ -32,54 +33,57 @@ namespace Play.Catalog.Service.Controllers
             return item.AsDto();
         }
 
-        // // POST /items
-        // [HttpPost]
-        // public ActionResult<ItemDto> Post(CreateItemDto createItemDto)
-        // {
-        //     var item = new ItemDto(Guid.NewGuid(), createItemDto.Name, createItemDto.Description, createItemDto.Price, DateTimeOffset.UtcNow);
-        //     items.Add(item);
+        // POST /items
+        [HttpPost]
+        public async Task<ActionResult<ItemDto>> PostAsync(CreateItemDto createItemDto)
+        {
+            var item = new Item
+            {
+                Name = createItemDto.Name,
+                Description = createItemDto.Description,
+                Price = createItemDto.Price,
+                CreatedDate = DateTimeOffset.UtcNow
+            };
 
-        //     return CreatedAtAction(nameof(GetById), new { id = item.Id }, item);
-        // }
+            await itemsRepository.CreateAsync(item);
 
-        // // PUT /items/{id}
-        // [HttpPut("{id}")]
-        // public IActionResult Put(Guid id, UpdateItemDto updateItemDto)
-        // {
-        //     var existingItem = items.Where(item => item.Id == id).SingleOrDefault();
+            return CreatedAtAction(nameof(GetByIdAsync), new { id = item.Id }, item);
+        }
 
-        //     if (existingItem == null)
-        //     {
-        //         return NotFound();
-        //     }
+        // PUT /items/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutAsync(Guid id, UpdateItemDto updateItemDto)
+        {
+            var existingItem = await itemsRepository.GetAsync(id);
 
-        //     var updateItem = existingItem with
-        //     {
-        //         Name = updateItemDto.Name,
-        //         Description = updateItemDto.Description,
-        //         Price = updateItemDto.Price
-        //     };
+            if (existingItem == null)
+            {
+                return NotFound();
+            }
 
-        //     var index = items.FindIndex(existingItem => existingItem.Id == id);
-        //     items[index] = updateItem;
+            existingItem.Name = updateItemDto.Name;
+            existingItem.Description = updateItemDto.Description;
+            existingItem.Price = updateItemDto.Price;
 
-        //     return NoContent();
-        // }
+            await itemsRepository.UpdateAsync(existingItem);
 
-        // //DELETE /items/{id}
-        // [HttpDelete("{id}")]
-        // public IActionResult Delete(Guid id)
-        // {
-        //     var index = items.FindIndex(existingItem => existingItem.Id == id);
+            return NoContent();
+        }
 
-        //     if (index < 0)
-        //     {
-        //         return NotFound();
-        //     }
+        //DELETE /items/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAsync(Guid id)
+        {
+            var item = await itemsRepository.GetAsync(id);
 
-        //     items.RemoveAt(index);
+            if (item == null)
+            {
+                return NotFound();
+            }
 
-        //     return NoContent();
-        // }
+            await itemsRepository.RemoveAsync(item.Id);
+
+            return NoContent();
+        }
     }
 }
