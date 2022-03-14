@@ -7,9 +7,14 @@ namespace Play.Catalog.Service.Controllers
 {
     [ApiController]
     [Route("api/items")]
-    public class ItemController : ControllerBase
+    public class ItemsController : ControllerBase
     {
-        private readonly ItemsRepository itemsRepository = new();
+        private readonly IItemsRepository itemsRepository;
+
+        public ItemsController(IItemsRepository itemsRepository)
+        {
+            this.itemsRepository = itemsRepository;
+        }
 
         // GET /items
         [HttpGet]
